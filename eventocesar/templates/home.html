@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+  <section class="banner">
+    <h1>cadastro de eventos</h1>
+    <h1>CESAR</h1>
+  </section>
+{% endblock %}
+
+
+{% block head %}
+
+<style>
+  .banner {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 80px;
+    
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+
+
+  @keyframes moveGradient {
+    0% {
+      background-position: 100% 0%;
+    }
+    50% {
+      background-position: 0% 100%;
+    }
+    100% {
+      background-position: 100% 0%;
+    }
+  }
+</style>
+
+{% endblock %}

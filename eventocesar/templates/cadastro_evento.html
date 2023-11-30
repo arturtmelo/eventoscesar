@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style>
+  /* Importando uma fonte do Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+  html, body {
+    font-family: 'Poppins', sans-serif;
+    background-image: linear-gradient(135deg, #5d927e 0%, #4b440a 100%);
+    /* Novas propriedades para estender o background */
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+
+  .form-box {
+  margin:  100px auto;
+  margin-bottom: 50px;
+  padding: 42px;
+  background: linear-gradient(90deg, rgb(10, 0, 25) 0%, rgb(0, 0, 0) 100%);
+  background-size: 200% 200%;
+  animation: moveGradient 10s ease infinite;
+  border-radius: 50px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+  color: rgb(255, 255, 255);
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; 
+}
+
+
+  .form-box:hover {
+    transform: translateY(-5px);
+  }
+
+  .form-box h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 500;
+    font-size: 44px;
+  }
+
+  .form-label {
+    font-weight: 500;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+  }
+
+  .btn-primary {
+    background-color: #e49400;
+    border-color: #FFA500;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .btn-primary:hover {
+    background-color: #FF7F50;
+    border-color: #FF7F50;
+  }
+
+  /* Adicionando animação ao passar o mouse sobre os campos do formulário */
+  .form-control {
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .form-control:hover, .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+    transform: translateY(-2px);
+  }
+
+  /* Adicionando animação ao passar o mouse sobre o botão */
+  .btn-primary {
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+  }
+
+  @keyframes moveGradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  max-width: 600px; /* largura máxima */
+  margin: auto; /* define as margens esquerda e direita como "auto" */
+  width: 100%; /* permite que o container possa ocupar toda a largura disponível */
+}
+
+
+.label-intervalo {
+  display: flex;
+  margin-left: 100px ;
+}
+
+.check-intervalo {
+  display: flex;
+  margin-left: 128px ;
+  margin-top: 10px;
+}
+
+
+.input-horario {
+  margin-left: 92px;
+  width: 35%;
+}
+
+.label-horario {
+  width: 100%;
+  text-align: center;
+}
+
+.style-data-row .col-md-6 {
+  width: 50%;
+  text-align: center;
+}
+
+.style-data-row .custom-date-input {
+  width: 70%; 
+  display: inline-block;
+}
+
+.presencial-field {
+  display: none;
+}
+
+</style>
+
+<div class="form-box">
+  <h1>Cadastro de Evento</h1>
+  <form method="POST" action="{{ url_for('cadastro_evento') }}">
+    {{ form_evento.csrf_token }}
+    <div class="mb-3">
+      <label for="nome" class="form-label">* Nome do Evento:</label>
+      <input type="text" class="form-control" id="nome" name="nome" required>
+    </div>
+    
+    <div class="mb-3">
+      <label for="email" class="form-label">* E-mail do Responsável:</label>
+      <input type="email" class="form-control" id="email" name="email_responsavel" required placeholder="@cesar.school" value="@cesar.school">
+    </div>
+    
+    <div class="mb-3">
+      <label for="area" class="form-label">* Área Demandante:</label>
+      <select class="form-select" id="area" name="area_demandante" required>
+        <option value="" disabled selected>Selecione uma opção</option>
+        <option value="Programação">Programação</option>
+        <option value="Design">Design</option>
+        <option value="Trabalho">Área de trabalho</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </div>
+      
+    <div class="mb-3">
+      <label for="descricao" class="form-label">* Descrição do Evento:</label>
+      <textarea class="form-control" id="descricao" name="descricao" rows="2" required placeholder="Ex: Palestra, Networking"></textarea>
+    </div>
+    
+    <div class="row style-data-row">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="data-inicio" class="form-label">* Data Início:</label>
+          <input type="date" class="form-control custom-date-input" id="data-inicio" name="data_inicio" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="data-fim" class="form-label">* Data Fim:</label>
+          <input type="date" class="form-control custom-date-input" id="data-fim" name="data_fim" required>
+        </div>
+      </div>
+    </div>      
+      
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-3 horario-container">
+          <label for="horario" class="form-label label-horario">* Horário:</label>
+          <input type="time" class="form-control input-horario" id="horario" name="horario" required>
+        </div>       
+      </div>
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="intervalo" class="form-check-label label-intervalo">Intervalo?</label>
+          <div class="form-check check-intervalo">
+            <input class="form-check-input input-intervalo" type="checkbox" id="intervalolala" name="intervalo">
+          </div>
+        </div>
+      </div>
+    </div>        
+      
+    <div class="mb-3">
+      <label for="publico" class="form-label">* Público Estimado:</label>
+      <input type="text" class="form-control" id="publico" name="publico_participante" required placeholder="Ex: 23">
+    </div>
+            
+    <div class="mb-3">
+      <label for="formato" class="form-label">* Formato do Evento:</label>
+      <select class="form-select" id="formato" name="formato" required>
+        <option value="" disabled selected>Selecione uma opção</option>
+        <option value="Presencial">Presencial</option>
+        <option value="Online">Online</option>
+        <option value="Híbrido">Híbrido</option>
+      </select>
+    </div>
+    
+    <div class="mb-3 presencial-field">
+      <label for="sala" class="form-label">Já há sala ou espaço reservado?</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="sala" id="sala-sim" value="Sim">
+        <label class="form-check-label" for="sala-sim">
+          Sim
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="sala" id="sala-nao" value="Não" checked>
+        <label class="form-check-label" for="sala-nao">
+          Não
+        </label>
+      </div>
+    </div>
+    
+    <div class="mb-3 presencial-field">
+      <label for="local" class="form-label">Caso sim, informe prédio e sala reservados:</label>
+      <input type="text" class="form-control" id="local" name="local" placeholder="Ex: BRUM, sala 9">
+    </div>
+    
+    <div class="mb-3 presencial-field">
+      <label for="coffee-break" class="form-label">Coffee Break?</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="coffee-break" id="coffee-break-sim" value="Sim">
+        <label class="form-check-label" for="coffee-break-sim">
+          Sim
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="coffee-break" id="coffee-break-nao" value="Não" checked>
+        <label class="form-check-label" for="coffee-break-nao">
+          Não
+        </label>
+      </div>
+    </div>
+    
+    <div class="mb-3 presencial-field">
+      <label for="necessidades" class="form-label">Caso sim, informe as necessidades específicas do Coffee Break:</label>
+      <textarea class="form-control" id="necessidades" name="necessidades" rows="1" placeholder="Ex: Cuscuz e champagne"></textarea>
+    </div>
+    
+    <div class="mb-3" id="link-zoom-section">
+      <label for="link-zoom" class="form-label">Link Zoom para Sala Virtual?</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="link-zoom" id="link-zoom-sim" value="Sim">
+        <label class="form-check-label" for="link-zoom-sim">
+          Sim
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="link-zoom" id="link-zoom-nao" value="Não" checked>
+        <label class="form-check-label" for="link-zoom-nao">
+          Não
+        </label>
+      </div>
+    </div>
+    
+    <div class="mb-3">
+      <div class="button-container">
+        {{ form_evento.botao_submit_cadastrarevento(class="btn btn-primary") }}
+      </div>
+    </div>
+    <div class="image-container"></div>            
+  </div>
+  <script>
+    const formatoSelect = document.getElementById('formato');
+    const salaField = document.querySelectorAll('.presencial-field');
+    const linkZoomSection = document.getElementById('link-zoom-section');
+
+    formatoSelect.addEventListener('change', function() {
+      if (formatoSelect.value === 'Presencial' || formatoSelect.value === 'Híbrido') {
+        salaField.forEach(function(element) {
+          element.style.display = 'block';
+        });
+        linkZoomSection.style.display = 'none';
+      } else if (formatoSelect.value === 'Online') {
+        salaField.forEach(function(element) {
+          element.style.display = 'none';
+        });
+        linkZoomSection.style.display = 'block';
+      } else {
+        salaField.forEach(function(element) {
+          element.style.display = 'none';
+        });
+        linkZoomSection.style.display = 'none';
+      }
+    });
+    
+    document.getElementById('descricao').addEventListener('input', function() {
+      var maxLength = 50;
+      var currentLength = this.value.length;
+      var remainingLength = maxLength - currentLength;
+      document.getElementById('contador').textContent = remainingLength;
+    });
+    
+    /* aceita apenas o primeiro clique "cadastrar" */
+    $(document).ready(function() {
+      $('form').submit(function() {
+        $(this).find(':input[type=submit]').prop('disabled', true);
+      });
+    });
+  </script>
+{% endblock %}

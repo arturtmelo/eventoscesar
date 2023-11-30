@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+<style>
+
+  /* Responsividade */
+  html {
+    min-height: 100%;
+    position: relative;
+  }
+
+
+  /* Estilo do contêiner de eventos */
+  .eventos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 77px 0;
+    background: rgb(190, 190, 198);
+    border-radius: 36px;
+    padding: 30px;
+    width: 175%;
+    box-sizing: border-box;
+    cursor: auto;
+    color: #000000;
+    text-align: center;
+    font-weight: bold;
+ /* Adiciona barra de rolagem horizontal personalizada */
+    scrollbar-width: thin;
+  }
+
+  .responsive-table{
+      border-radius: 8px;
+    }
+
+/* tira linha debaixo dos botoes aprovar, excluir */
+.approve-event, .delete-event, .improve-event {
+  text-decoration: none;
+}
+
+  /* Estilo da tabela */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    font-weight: bold;
+    background-color: #1c001c;
+    color: rgb(241, 232, 232);
+    padding: 10px;
+    text-align: center;
+    border-bottom: 2px solid #f1f1f1;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 8px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+
+  .eventos-table tbody tr:nth-child(odd) {
+    background-color: #1370009a; 
+}
+
+.eventos-table tbody tr:nth-child(even) {
+  background-color: #828bb0;
+}
+
+
+/* Estilo da tabela responsiva */
+.responsive-table {
+  overflow-x: auto;
+}
+
+/* Animação do gradiente */
+.animated-gradient {
+  background-size: 200% 200%;
+  animation: gradient-movement 10s ease infinite;
+}
+
+@keyframes gradient-movement {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+/* Estilo da mensagem de aviso */
+.no-events {
+  margin-top: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+
+/* Estilo do formulário de filtro */
+  .filtro-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.575);
+    border-radius: 55px;
+    padding: 15px;
+    margin-bottom: 20px;
+    width: 94%; /* Ajuste esse valor de acordo com suas preferências */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+
+  .filtro-form label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    margin-right: 5px;
+  }
+
+  .filtro-form input[type="number"], .filtro-form select {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 10px;
+  }
+
+  .filtro-form input[type="submit"] {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    background-color: rgb(21, 0, 0);
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .filtro-form input[type="submit"]:hover {
+    background-color: rgb(62, 144, 0);
+  }
+
+
+  .modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #ff6e6e;
+  margin: 5% auto;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  display: grid;
+  grid-gap: 20px;
+  align-items: center;
+  justify-items: center;
+}
+
+.modal-content.custom-modal-content {
+  background-color: #c1d1d8;
+}
+
+.close-modal {
+  color: #6c4747;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-modal:hover,
+.close-modal:focus-visible {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+
+}
+
+/* Estilização do formulário de ajuste */
+#improvement-modal label {
+  margin-bottom: 15px;
+}
+
+#improvement-modal textarea {
+  margin-bottom: 25px;
+}
+
+
+/* Estilização do botão de envio */  
+
+button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 20px auto 0; 
+  text-align: center; 
+}
+
+button[type="submit"]:hover {
+  background-color: #419645;
+}
+
+
+textarea {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+#plum {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  background: linear-gradient(90deg, rgb(67, 88, 107) 0%, rgb(81, 131, 96) 100%); 
+
+  color: rgb(252, 252, 252);
+  border-radius: 100px;
+  padding: 30px;
+  width: 52%;
+  box-sizing: border-box;
+  cursor: auto;
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+
+</style>
+
+
+{% endblock %}
+
+{% block body %}
+<div class="container main-container">
+  <div class="eventos-container animated-gradient">
+    <h1>Eventos Solicitados</h1>
+    {% if eventos %}
+
+    <div class="filtro-form">
+      <form method="POST" action="{{ url_for('eventos') if '/eventos' in request.path else url_for('eventos_aprovados') }}">
+          {{ form_filtro.csrf_token }}
+          {{ form_filtro.ordenar_data.label }} {{ form_filtro.ordenar_data }}
+          {{ form_filtro.categoria.label }} {{ form_filtro.categoria }}
+          {{ form_filtro.filtrar }}
+      </form>
+    </div>
+  
+
+      <div class="responsive-table">
+      <table class="eventos-table">
+        <thead>      
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email Responsável</th>
+            <th>Assunto</th>
+            <th>Descrição</th>
+            <th>Data Início</th>
+            <th>Data Fim</th>
+            <th>Horário</th>
+            <th>Vagas</th>
+            <th>Formato</th>
+            <th>Aprovar</th>
+            <th>Excluir</th>
+            <th>Ajustar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for evento in eventos %}
+            <tr>
+              <td>{{ evento.id }}</td>
+              <td>{{ evento.nome }}</td>
+              <td>{{ evento.email_responsavel }}</td>
+              <td>{{ evento.area_demandante }}</td>
+              <td>{{ evento.descricao }}</td>
+              <td>{{ evento.data_inicio.strftime('%d/%m') }}</td>
+              <td>{{ evento.data_fim.strftime('%d/%m') }}</td>
+              <td>{{ evento.horario }}</td>
+              <td>{{ evento.publico_participante }}</td>      
+              <td>{{ evento.formato }}</td>                  
+              <td class="icon-cell"><a href="javascript:void(0);" onclick="confirmApproval('{{ evento.id }}', '{{ evento.nome }}')" class="approve-event">✔️</a></td>
+              <td class="icon-cell"><a href="javascript:void(0);" onclick="confirmDelete('{{ evento.id }}', '{{ evento.nome }}')" class="delete-event">❌</a></td>
+              <td class="icon-cell"><a href="#" class="improve-event open-modal" data-event-id="{{ evento.id }}">🛠️</a></td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div id="approval-confirmation-modal" class="modal">
+        <div class="modal-content custom-modal-content">
+          <span class="close-modal close-approval-modal">&times;</span>
+          <h2>Aprovar</h2>
+          <p>Tem certeza que deseja aprovar o evento (<span id="approval-event-name"></span>)?</p>
+          <button type="submit" id="confirm-approval-btn" class="confirm-approval">Confirmar</button>
+        </div>
+      </div>     
+      
+
+      <div id="improvement-modal" class="modal">
+        <div class="modal-content custom-modal-content">
+          <span class="close-modal">&times;</span>
+          <h2>Ajuste</h2>
+          <form id="improvement-form">
+            <input type="hidden" id="event-id" value="">
+            <label for="improvement-text">Descreva as alterações necessárias:</label>
+            <textarea id="improvement-text" rows="3" style="width: 100%;"></textarea>
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+
+      <div id="delete-confirmation-modal" class="modal">
+        <div class="modal-content custom-modal-content">
+          <span class="close-modal close-delete-modal">&times;</span>
+          <h2>Excluir</h2>
+          <p>Motivo da exclusão do evento (<span id="delete-event-name"></span>):</p>
+          <textarea id="delete-reason" rows="3" style="width: 100%;"></textarea>
+          <button type="submit" id="confirm-delete-btn" class="confirm-delete">Enviar</button>
+        </div>
+      </div>     
+             
+    </div>        
+  </div>
+
+  {% else %}
+      <div class="filtro-form">
+        <form method="POST" action="{{ url_for('eventos') if '/eventos' in request.path else url_for('eventos_aprovados') }}">
+            {{ form_filtro.csrf_token }}
+            {{ form_filtro.ordenar_data.label }} {{ form_filtro.ordenar_data }}
+            {{ form_filtro.categoria.label }} {{ form_filtro.categoria }}
+            {{ form_filtro.filtrar }}
+        </form>
+      </div>
+      <p id="plum">Ainda não há eventos solicitados</p>
+      
+    {% endif %}
+  </div>
+</div>
+</div>
+<script>
+  var approvalModal = document.getElementById("approval-confirmation-modal");
+  var closeApprovalModalBtn = document.getElementsByClassName("close-approval-modal")[0];
+  var confirmApprovalBtn = document.getElementById("confirm-approval-btn");
+
+  function confirmApproval(eventId, eventName) {
+    document.getElementById("approval-event-name").innerHTML = eventName;
+    confirmApprovalBtn.onclick = function() { approveEvent(eventId); }
+    approvalModal.style.display = "block";
+  }
+
+  closeApprovalModalBtn.onclick = function() {
+    approvalModal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == approvalModal) {
+      approvalModal.style.display = "none";
+    }
+  }
+
+  function approveEvent(eventId) {
+    $.ajax({
+      url: '/aprovar_evento/' + eventId,
+      type: 'POST',
+      success: function () {
+        location.reload();
+      },
+      error: function (response) {
+        if (response.status === 400) {
+          alert(response.responseJSON.message);
+        } else {
+          console.error("Erro ao aprovar o evento");
+        }
+      }
+    });
+  }
+</script>
+
+{% endblock %}
